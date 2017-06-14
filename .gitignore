@@ -1,0 +1,11 @@
+/bin
+/data
+/notes
+/obj
+/references
+
+
+*.aux
+*.bbl
+*.blg
+*.synctex
