@@ -1,36 +1,11 @@
 !==============================================================================
-! Module REGIONAL_MODULE                                          (14-Jun-2017)
+! Module REGIONAL_MODULE                                          (16-Jun-2017)
 !
 ! Written by:
-! 	Dr. Randal J. Barnes
-!   Department of Civil, Environmental, and Geo- Engineering
-!   University of Minnesota
-!   <barne003@umn.edu>
-!
-! Copyright (c) 2017, Randal J. Barnes
-! All rights reserved.
-! 
-! Redistribution and use in source and binary forms, with or without
-! modification, are permitted provided that the following conditions are met:
-!     * Redistributions of source code must retain the above copyright
-!       notice, this list of conditions and the following disclaimer.
-!     * Redistributions in binary form must reproduce the above copyright
-!       notice, this list of conditions and the following disclaimer in the
-!       documentation and/or other materials provided with the distribution.
-!     * Neither the name of the <organization> nor the
-!       names of its contributors may be used to endorse or promote products
-!       derived from this software without specific prior written permission.
-! 
-! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-! ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-! WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-! DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-! DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-! (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-! LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-! ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-! (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-! SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+! 	   Dr. Randal J. Barnes
+!     Department of Civil, Environmental, and Geo- Engineering
+!     University of Minnesota
+!     <barne003@umn.edu>
 !==============================================================================
 
 !==============================================================================
@@ -98,7 +73,7 @@ CONTAINS
    ! Declare the arguments.
    TYPE(T_REGIONAL), INTENT(IN)  :: Regional ! regional flow of interest
    REAL(8),          INTENT(IN)  :: X        ! X coordinate of interest
-   REAL(8),          INTENT(IN)  :: Y        ! Y coordinate of interest   
+   REAL(8),          INTENT(IN)  :: Y        ! Y coordinate of interest
 
    REAL(8)                       :: Phi      ! resulting discharge potential
 
@@ -122,7 +97,7 @@ CONTAINS
    ! Declare the arguments.
    TYPE(T_REGIONAL), INTENT(IN)  :: Regional ! regional flow of interest
    REAL(8),          INTENT(IN)  :: X        ! X coordinate of interest
-   REAL(8),          INTENT(IN)  :: Y        ! Y coordinate of interest   
+   REAL(8),          INTENT(IN)  :: Y        ! Y coordinate of interest
 
    REAL(8), DIMENSION(2)         :: Q        ! resulting discharge
 
@@ -226,9 +201,9 @@ CONTAINS
 
    ! Do a simple validation check.
    IF( ANY(ISNAN(P)) .OR. ANY(ISINF(P)) ) THEN
-      CALL ExecutionError( INVALID_PARAM_ERROR, 'Regional.f95', 'SetParameters' )   
+      CALL ExecutionError( INVALID_PARAM_ERROR, 'Regional.f95', 'SetParameters' )
    END IF
-   
+
    ! Set the parameter vector.
    Regional%A  = P(1)
    Regional%B  = P(2)

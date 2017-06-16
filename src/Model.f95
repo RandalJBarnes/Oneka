@@ -1,36 +1,11 @@
 !==============================================================================
-! Module MODEL_MODULE                                            (14-Jun-2017)
+! Module MODEL_MODULE                                            (16-Jun-2017)
 !
 ! Written by:
-! 	Dr. Randal J. Barnes
-!   Department of Civil, Environmental, and Geo- Engineering
-!   University of Minnesota
-!   <barne003@umn.edu>
-!
-! Copyright (c) 2017, Randal J. Barnes
-! All rights reserved.
-!
-! Redistribution and use in source and binary forms, with or without
-! modification, are permitted provided that the following conditions are met:
-!     * Redistributions of source code must retain the above copyright
-!       notice, this list of conditions and the following disclaimer.
-!     * Redistributions in binary form must reproduce the above copyright
-!       notice, this list of conditions and the following disclaimer in the
-!       documentation and/or other materials provided with the distribution.
-!     * Neither the name of the <organization> nor the
-!       names of its contributors may be used to endorse or promote products
-!       derived from this software without specific prior written permission.
-!
-! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-! ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-! WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-! DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-! DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-! (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-! LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-! ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-! (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-! SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+! 	   Dr. Randal J. Barnes
+!     Department of Civil, Environmental, and Geo- Engineering
+!     University of Minnesota
+!     <barne003@umn.edu>
 !==============================================================================
 
 !==============================================================================
@@ -40,6 +15,7 @@ MODULE MODEL_MODULE
    USE CAPTUREZONE_MODULE
    USE CONSTANTS_MODULE
    USE ERROR_MODULE
+   USE GEOHYDROLOGY_MODULE
    USE NUMERIC_MODULE
    USE REGIONAL_MODULE
    USE WELL_MODULE
@@ -92,31 +68,6 @@ MODULE MODEL_MODULE
       REAL(8) :: Thickness ! aquifer thickness
       REAL(8) :: Weight    ! pseudo-probability
    END TYPE T_THICK
-
-   !===========================================================================
-   ! Type T_GEOHYDROLOGY
-   !===========================================================================
-   TYPE T_GEOHYDROLOGY
-      REAL(8) :: ERec   ! Recharge expected value
-      REAL(8) :: SRec   ! Recharge standard deviation
-      REAL(8) :: VRec   ! Recharge variance
-
-      REAL(8) :: EQx    ! Magnitude of Qx at the origin expected value
-      REAL(8) :: SQx    ! Magnitude of Qx at the origin standard deviation
-      REAL(8) :: VQx    ! Magnitude of Qx at the origin variance
-
-      REAL(8) :: EQy    ! Magnitude of Qy at the origin expected value
-      REAL(8) :: SQy    ! Magnitude of Qy at the origin standard deviation
-      REAL(8) :: VQy    ! Magnitude of Qy at the origin variance
-
-      REAL(8) :: EMag   ! Magnitude of discharge at the origin expected value
-      REAL(8) :: SMag   ! Magnitude of discharge at the origin standard deviation
-      REAL(8) :: VMag   ! Magnitude of discharge at the origin variance
-
-      REAL(8) :: EDir   ! Direction of discharge at the origin expected value
-      REAL(8) :: SDir   ! Direction of discharge at the origin standard deviation
-      REAL(8) :: VDir   ! Direction of discharge at the origin variance
-   END TYPE T_GEOHYDROLOGY
 
    !===========================================================================
    ! Type T_MODEL
@@ -198,10 +149,6 @@ MODULE MODEL_MODULE
 
    INTERFACE Fit
       MODULE PROCEDURE Fit_Model
-   END INTERFACE
-
-   INTERFACE ComputeGeohydrology
-      MODULE PROCEDURE ComputeGeohydrology_Model
    END INTERFACE
 
    INTERFACE Head
@@ -908,10 +855,10 @@ CONTAINS
       CALL CholeskyDecomposition( 6, MATMUL(MATMUL(TRANSPOSE(XX), VVinv), XX), L )
       CALL CholeskySolve( 6, L, MATMUL(MATMUL(TRANSPOSE(XX), VVinv), bb), Avg )
 
-      ! Compute the asymptotice parameter covariance matrix.
+      ! Compute the asymptotic parameter covariance matrix.
       CALL CholeskyInverse( 6, L, Cov )
 
-      ! Set the parameters to the fitted values.
+      ! Set the parameters to the fitted mean values.
       CALL SetParameters( Model%Regional, Avg )
 
       ! Compute the parameter standard deviations.
@@ -919,7 +866,7 @@ CONTAINS
          Std(j) = SQRT( MAX( Cov(j,j), real(0,8) ) )
       END DO
 
-      CALL ComputeGeohydrology( Avg, Cov, Geo )
+      Geo = ComputeGeohydrologyStatistics( Avg, Cov )
 
       !------------------------------------------
       ! Write out the level-2 fit-by-fit summaries to the log file.
@@ -990,7 +937,7 @@ CONTAINS
                CALL CholeskyDecomposition( 6, MATMUL(MATMUL(TRANSPOSE(XX), VVinv), XX), L )
                CALL CholeskySolve( 6, L, MATMUL(MATMUL(TRANSPOSE(XX), VVinv), bb), AA )
                CALL CholeskyInverse( 6, L, CC )
-               CALL ComputeGeohydrology( AA, CC, GG )
+               GG = ComputeGeohydrologyStatistics( AA, CC )
 
                IF( GG%SRec > 0 .AND. Geo%SRec > 0 ) THEN
                   DFBETAS(i,1) = (GG%ERec - Geo%ERec)/Geo%SRec
@@ -1071,85 +1018,6 @@ CONTAINS
       END IF
 
    END SUBROUTINE Fit_Model
-
-   !---------------------------------------------------------------------------
-   ! ComputeGeohydrology
-   !
-   !  Compute the geohydrology statistics (rechange, magnitude and
-   !  direction of the regional discharge at the origin) using first-order
-   !  second moment approximations.
-   !---------------------------------------------------------------------------
-   SUBROUTINE ComputeGeohydrology_Model( Avg, Cov, Geo )
-      ! Declare the arguments.
-      REAL(8), DIMENSION(6),   INTENT(IN)    :: Avg   ! (6x1) parameter expected value matrix
-      REAL(8), DIMENSION(6,6), INTENT(IN)    :: Cov   ! (6x6) covariance matrix
-      TYPE(T_GEOHYDROLOGY),    INTENT(OUT)   :: Geo   ! geohydrology statistics
-
-      ! Declare the local variables.
-      REAL(8) :: T, Qx, Qy
-      REAL(8) :: U, dUdQx, dUdQy, d2UdQx2, d2UdQy2, d2UdQxQy
-      REAL(8) :: D, dDdQx, dDdQy, d2DdQx2, d2DdQy2, d2DdQxQy
-
-      ! Statistics for the regional uniform recharge.
-      Geo%ERec = -2 * ( Avg(1) + Avg(2) )
-      Geo%VRec = 4*Cov(1,1) + 4*Cov(2,2) + 8*Cov(1,2)
-      Geo%SRec = SQRT( MAX( Geo%VRec, real(0,8) ) )
-
-      ! Statistics for discharge at the origin.
-      Geo%EQx = -Avg(4)
-      Geo%VQx = Cov(4,4)
-      Geo%SQx = SQRT( MAX( Geo%VQx, real(0,8) ) )
-
-      Geo%EQy = -Avg(5)
-      Geo%VQy = Cov(5,5)
-      Geo%SQy = SQRT( MAX( Geo%VQy, real(0,8) ) )
-
-      ! Statistics for the magnitude and direction of the regional discharge at the origin.
-      Qx = -Avg(4)
-      Qy = -Avg(5)
-      T = Qx**2 + Qy**2
-
-      IF( T .GT. real(0,8) ) THEN
-         ! Statistics for the magnitude.
-         U = SQRT( T )
-
-         dUdQx   = Qx / U
-         d2UdQx2 = ( 1 - dUdQx**2 ) / U
-
-         dUdQy   = Qy / U
-         d2UdQy2 = ( 1 - dUdQy**2 ) / U
-
-         d2UdQxQy = -( dUdQx * dUdQy ) / U
-
-         Geo%EMag = U + 0.5*Cov(4,4)*d2UdQx2 + 0.5*Cov(5,5)*d2UdQy2 + Cov(4,5)*d2UdQxQy
-         Geo%VMag = Cov(4,4)*dUdQx**2 + Cov(5,5)*dUdQy**2 + 2*Cov(4,5)*dUdQx*dUdQy
-         Geo%SMag = SQRT( MAX( Geo%VMag, real(0,8) ) )
-
-         ! Statistics for the direction.
-         D = DATAN2( Qy, Qx )
-
-         dDdQx   = -Qy / T
-         d2DdQx2 =  2*Qx*Qy / T**2
-
-         dDdQy   =  Qx / T
-         d2DdQy2 = -2*Qx*Qy / T**2
-
-         d2DdQxQy = ( Qy**2 - Qx**2 ) / T**2
-
-         Geo%EDir = D + 0.5*Cov(4,4)*d2DdQx2 + 0.5*Cov(5,5)*d2DdQy2 + Cov(4,5)*d2DdQxQy
-         Geo%VDir = Cov(4,4)*dDdQx**2 + Cov(5,5)*dDdQy**2 + 2*Cov(4,5)*dDdQx*dDdQy
-         Geo%SDir = SQRT( MAX( Geo%VDir, real(0,8) ) )
-      ELSE
-         Geo%EMag = 0
-         Geo%VMag = -1
-         Geo%SMag = -1
-
-         Geo%EDir = 0
-         Geo%VDir = -1
-         Geo%SDir = -1
-      END IF
-   END SUBROUTINE ComputeGeohydrology_Model
-
 
    !---------------------------------------------------------------------------
    ! Head_Model

@@ -1,36 +1,11 @@
 !==============================================================================
-! Module CONSTANTS_MODULE                                         (14-Jun-2017)
+! Module CONSTANTS_MODULE                                         (16-Jun-2017)
 !
 ! Written by:
-! 	Dr. Randal J. Barnes
-!   Department of Civil, Environmental, and Geo- Engineering
-!   University of Minnesota
-!   <barne003@umn.edu>
-!
-! Copyright (c) 2017, Randal J. Barnes
-! All rights reserved.
-! 
-! Redistribution and use in source and binary forms, with or without
-! modification, are permitted provided that the following conditions are met:
-!     * Redistributions of source code must retain the above copyright
-!       notice, this list of conditions and the following disclaimer.
-!     * Redistributions in binary form must reproduce the above copyright
-!       notice, this list of conditions and the following disclaimer in the
-!       documentation and/or other materials provided with the distribution.
-!     * Neither the name of the <organization> nor the
-!       names of its contributors may be used to endorse or promote products
-!       derived from this software without specific prior written permission.
-! 
-! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-! ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-! WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-! DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-! DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-! (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-! LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-! ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-! (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-! SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+! 	   Dr. Randal J. Barnes
+!     Department of Civil, Environmental, and Geo- Engineering
+!     University of Minnesota
+!     <barne003@umn.edu>
 !==============================================================================
 
 !==============================================================================
@@ -52,13 +27,13 @@ MODULE CONSTANTS_MODULE
    REAL(8), PARAMETER :: TWO_OVER_SQRT_PI     = 1.128379167095512573996160_8
    REAL(8), PARAMETER :: ONE_OVER_SQRT_TWO_PI = 0.398942280401432677939946_8
    REAL(8), PARAMETER :: EULER_GAMMA          = 0.577215664901532860606512_8
-   
+
    REAL(8), PARAMETER :: DEG_TO_RAD           = ONE_PI/180.0_8
    REAL(8), PARAMETER :: RAD_TO_DEG           = 180.0_8/ONE_PI
 
    REAL(8), PARAMETER :: EPS                  = EPSILON(1.0_8)
    REAL(8), PARAMETER :: INFINITY             = HUGE(1.0_8)
-   
+
    COMPLEX(8), PARAMETER :: CMPLX_I           = DCMPLX(0.0_8, 1.0_8)
    COMPLEX(8), PARAMETER :: TWO_PI_I          = DCMPLX(0.0_8, TWO_PI)
 

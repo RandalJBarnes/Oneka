@@ -22,16 +22,69 @@
 				<Option compiler="gfortran" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-fimplicit-none" />
+					<Add option="-ffree-line-length-none" />
+					<Add option="-ffree-form" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
+			</Target>
+			<Target title="Test">
+				<Option output="bin/Test/test_Oneka" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Test/" />
+				<Option type="1" />
+				<Option compiler="gfortran" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="main.f95" />
+		<Unit filename="src/aquifer.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/capture_zone.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/constants.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/driver.f95">
+			<Option weight="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/error.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/model.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/numeric.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/regional.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/utilities.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/well.f95">
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="test/test_Main.f95">
+			<Option weight="1" />
+			<Option target="Test" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="test/test_Numeric.f95">
+			<Option weight="0" />
+			<Option target="Test" />
+			<Option target="Debug" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

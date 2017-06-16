@@ -1,36 +1,11 @@
 !==============================================================================
-! Module WELL_MODULE                                              (14-Jun-2017)
+! Module WELL_MODULE                                              (16-Jun-2017)
 !
 ! Written by:
-! 	Dr. Randal J. Barnes
-!   Department of Civil, Environmental, and Geo- Engineering
-!   University of Minnesota
-!   <barne003@umn.edu>
-!
-! Copyright (c) 2017, Randal J. Barnes
-! All rights reserved.
-! 
-! Redistribution and use in source and binary forms, with or without
-! modification, are permitted provided that the following conditions are met:
-!     * Redistributions of source code must retain the above copyright
-!       notice, this list of conditions and the following disclaimer.
-!     * Redistributions in binary form must reproduce the above copyright
-!       notice, this list of conditions and the following disclaimer in the
-!       documentation and/or other materials provided with the distribution.
-!     * Neither the name of the <organization> nor the
-!       names of its contributors may be used to endorse or promote products
-!       derived from this software without specific prior written permission.
-! 
-! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-! ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-! WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-! DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-! DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-! (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-! LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-! ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-! (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-! SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+! 	   Dr. Randal J. Barnes
+!     Department of Civil, Environmental, and Geo- Engineering
+!     University of Minnesota
+!     <barne003@umn.edu>
 !==============================================================================
 
 !==============================================================================
@@ -77,11 +52,11 @@ CONTAINS
    ! Declare the local variables.
    REAL(8) :: DX, DY, R2
 
-   ! Compute the discharge potential for the well.   
-   DX  = X - Well%X 
+   ! Compute the discharge potential for the well.
+   DX  = X - Well%X
    DY  = Y - Well%Y
    R2  = DX*DX + DY*DY
-   
+
    IF( R2 .LT. Well%R*Well%R ) THEN
       Phi = Well%Q/FOUR_PI * LOG( Well%R*Well%R )
    ELSE

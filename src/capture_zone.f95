@@ -1,36 +1,11 @@
 !==============================================================================
-! Module CAPTUREZONE_MODULE                                       (14-Jun-2017)
+! Module CAPTUREZONE_MODULE                                       (16-Jun-2017)
 !
 ! Written by:
-! 	Dr. Randal J. Barnes
-!   Department of Civil, Environmental, and Geo- Engineering
-!   University of Minnesota
-!   <barne003@umn.edu>
-!
-! Copyright (c) 2017, Randal J. Barnes
-! All rights reserved.
-! 
-! Redistribution and use in source and binary forms, with or without
-! modification, are permitted provided that the following conditions are met:
-!     * Redistributions of source code must retain the above copyright
-!       notice, this list of conditions and the following disclaimer.
-!     * Redistributions in binary form must reproduce the above copyright
-!       notice, this list of conditions and the following disclaimer in the
-!       documentation and/or other materials provided with the distribution.
-!     * Neither the name of the <organization> nor the
-!       names of its contributors may be used to endorse or promote products
-!       derived from this software without specific prior written permission.
-! 
-! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-! ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-! WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-! DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-! DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-! (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-! LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-! ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-! (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-! SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+! 	   Dr. Randal J. Barnes
+!     Department of Civil, Environmental, and Geo- Engineering
+!     University of Minnesota
+!     <barne003@umn.edu>
 !==============================================================================
 
 !==============================================================================
@@ -68,7 +43,7 @@ MODULE CAPTUREZONE_MODULE
 
       ! Probability grid.
       REAL(8), POINTER, DIMENSION(:,:) :: PGrid => NULL()
-      
+
    END TYPE T_CAPTUREZONE
 
    !===========================================================================
@@ -85,7 +60,7 @@ MODULE CAPTUREZONE_MODULE
    INTERFACE CreateAsciiGridFile
       MODULE PROCEDURE CreateAsciiGridFile_CaptureZone
    END INTERFACE
-   
+
    INTERFACE DistanceSquared
       MODULE PROCEDURE DistanceSquared_CaptureZone
    END INTERFACE
@@ -114,6 +89,7 @@ MODULE CAPTUREZONE_MODULE
       MODULE PROCEDURE ExpandGrid_CaptureZone
    END INTERFACE
 
+!------------------------------------------------------------------------------
 CONTAINS
    !---------------------------------------------------------------------------
    ! CreateEsriGridFile_CaptureZone
@@ -132,7 +108,7 @@ CONTAINS
    INTEGER, PARAMETER :: GUNIT = 31
    INTEGER, PARAMETER :: HUNIT = 32
 
-   REAL(4), PARAMETER :: BLANKVAL = 3.402823466E+38 / 2 
+   REAL(4), PARAMETER :: BLANKVAL = 3.402823466E+38 / 2
 
    ! Declare local variables
    INTEGER :: row, col, j
@@ -149,7 +125,7 @@ CONTAINS
 
    ! Write the header file.
    OPEN( UNIT=HUNIT, FILE=HeadFilename, ACTION='WRITE', STATUS='REPLACE', ERR=10 )
-   
+
    WRITE(HUNIT,*) 'ncols ',       CaptureZone%nCols
    WRITE(HUNIT,*) 'nrows ',       CaptureZone%nRows
    WRITE(HUNIT,*) 'xllcorner ',   CaptureZone%Xmin
@@ -159,19 +135,19 @@ CONTAINS
    WRITE(HUNIT,*) 'byteorder lsbfirst'
 
    CLOSE(HUNIT)
-   
+
    WRITE(LUNIT,*)
    WRITE(LUNIT,*) 'ESRI header file created: ', ADJUSTL(TRIM(HeadFilename))
-   
+
    WRITE(SUNIT,*)
    WRITE(SUNIT,*) 'ESRI header file created: ', ADJUSTL(TRIM(HeadFilename))
-   
+
    ! Write out the grid file.
    OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", FORM="UNFORMATTED", ACCESS="DIRECT", RECL=4, STATUS="REPLACE", ERR=20 )
-   
+
    ! CHANGE: Flip the row the other way around. (13 Jun 2017, RJB)
    ! DO row = CaptureZone%nRows, 1, -1
-   
+
    DO row = 1, CaptureZone%nRows
       DO col = 1, CaptureZone%nCols
          j = (row-1)*CaptureZone%nCols + col
@@ -181,13 +157,13 @@ CONTAINS
    END DO
 
    CLOSE(GUNIT)
-   
+
    WRITE(LUNIT,*) 'ESRI grid file created: ', ADJUSTL(TRIM(GridFilename))
    WRITE(LUNIT,*)
-   
+
    WRITE(SUNIT,*) 'ESRI grid file created: ', ADJUSTL(TRIM(GridFilename))
    WRITE(SUNIT,*)
-   
+
    RETURN
 
    ! Process the file error.
@@ -204,7 +180,7 @@ CONTAINS
    ! CreateSurferGridFile_CaptureZone
    !
    ! Notes:
-   !  o  This routine writes out a binary Surfer grid file, using the 
+   !  o  This routine writes out a binary Surfer grid file, using the
    !     Surfer 6.0 grid file format (i.e. "DSBB").
    !---------------------------------------------------------------------------
    SUBROUTINE CreateSurferGridFile_CaptureZone( CaptureZone, Filename )
@@ -215,7 +191,7 @@ CONTAINS
 
    ! Declare local parameters.
    INTEGER, PARAMETER :: GUNIT = 31
-   ! REAL(4), PARAMETER :: SURFER_BLANKVAL = 3.402823466E+38 / 2 
+   ! REAL(4), PARAMETER :: SURFER_BLANKVAL = 3.402823466E+38 / 2
 
    ! Declare local variables
    INTEGER :: row, col, j
@@ -235,7 +211,7 @@ CONTAINS
 
    ! Open the file, with a record length of 8, and write out the header information.
    OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", FORM="UNFORMATTED", ACCESS="DIRECT", RECL=8, STATUS="REPLACE", ERR=10 )
-   
+
    WRITE(GUNIT, REC=1) 'DSBB', INT( CaptureZone%nCols, 2 ), INT( CaptureZone%nRows, 2 )
    WRITE(GUNIT, REC=2) REAL( CaptureZone%Xmin, 8 )
    WRITE(GUNIT, REC=3) REAL( CaptureZone%Xmax, 8 )
@@ -258,21 +234,21 @@ CONTAINS
    END DO
 
    CLOSE(GUNIT)
-   
+
    WRITE(LUNIT,*)
    WRITE(LUNIT,*) 'SURFER grid file created: ', ADJUSTL(TRIM(GridFilename))
    WRITE(LUNIT,*)
-   
+
    WRITE(SUNIT,*)
-   WRITE(SUNIT,*) 'SURFER grid file created: ', ADJUSTL(TRIM(GridFilename))   
+   WRITE(SUNIT,*) 'SURFER grid file created: ', ADJUSTL(TRIM(GridFilename))
    WRITE(SUNIT,*)
-   
+
    RETURN
 
    ! Process the file error.
 10 CALL FileError( GridFilename )
    RETURN
-   
+
    END SUBROUTINE CreateSurferGridFile_CaptureZone
 
    !---------------------------------------------------------------------------
@@ -305,11 +281,11 @@ CONTAINS
 
    ! Open the file, with a record length of 8, and write out the header information.
    OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", STATUS="REPLACE", ERR=10 )
-   
+
    WRITE(GUNIT,'(I10, 1X, I10)') CaptureZone%nRows, CaptureZone%nCols
    WRITE(GUNIT,'(E16.8, 1X, E16.8)') CaptureZone%Xmin, CaptureZone%Xmax
    WRITE(GUNIT,'(E16.8, 1X, E16.8)') CaptureZone%Ymin, CaptureZone%Ymax
-   
+
    DO row = 1, CaptureZone%nRows
       DO col = 1, CaptureZone%nCols
          Z = CaptureZone%PGrid(row,col) / CaptureZone%Weight
@@ -319,24 +295,24 @@ CONTAINS
    END DO
 
    CLOSE(GUNIT)
-   
+
    WRITE(LUNIT,*)
    WRITE(LUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))
    WRITE(LUNIT,*)
-   
+
    WRITE(SUNIT,*)
-   WRITE(SUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))   
-   WRITE(SUNIT,*)   
-   
+   WRITE(SUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))
+   WRITE(SUNIT,*)
+
    RETURN
 
    ! Process the file error.
 10 CALL FileError( GridFilename )
    RETURN
-   
+
    END SUBROUTINE CreateAsciiGridFile_CaptureZone
 
-   
+
    !---------------------------------------------------------------------------
    ! DistanceSquared_CaptureZone
    !
@@ -434,7 +410,7 @@ CONTAINS
 
    DO i = left, right
       DO j = bottom, top
-         IF( CaptureZone%RGrid(j,i) .EQV. .FALSE. ) THEN 
+         IF( CaptureZone%RGrid(j,i) .EQV. .FALSE. ) THEN
             Cx = CaptureZone%Xmin + i*CaptureZone%DeltaX
             Cy = CaptureZone%Ymin + j*CaptureZone%DeltaY
 
@@ -568,7 +544,7 @@ CONTAINS
    ! ExpandGrid_CaptureZone
    !  This routine expands the grids (RGrid and PGrid) to include the point
    !  [X,Y].  The contents of the grids are maintained.
-   !     
+   !
    ! Notes:
    !  o  This routine allocates a new grid, copies the contents from the old
    !     grid, and then dealloates the old grids.  Thus, there must be suffi-
