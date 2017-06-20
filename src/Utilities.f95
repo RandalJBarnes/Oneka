@@ -1,5 +1,5 @@
 !==============================================================================
-! Module UTILITIES_MODULE                                         (16-Jun-2017)
+! Module UTILITIES_MODULE                                         (20-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -17,7 +17,7 @@ MODULE UTILITIES_MODULE
    !---------------------------------------------------------------------------
    ! Module parameters
    !---------------------------------------------------------------------------
-   CHARACTER(*), PARAMETER :: Version = '(16-Jun-2017 [BETA])'
+   CHARACTER(*), PARAMETER :: Version = '(20-Jun-2017 [BETA])'
 
    !---------------------------------------------------------------------------
    ! Module variables

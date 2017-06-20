@@ -1,5 +1,5 @@
 !==============================================================================
-! Module MODEL_MODULE                                            (16-Jun-2017)
+! Module MODEL_MODULE                                            (20-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -815,7 +815,7 @@ CONTAINS
 
          Pwell(i) = 0
          DO j = 1, Model%nWell
-           Pwell(i) = Pwell(i) - Potential( Model%Well(j), Model%Obs(i)%X, Model%Obs(i)%Y )
+           Pwell(i) = Pwell(i) + Potential( Model%Well(j), Model%Obs(i)%X, Model%Obs(i)%Y )
          END DO
 
          b(i) = Pev(i) - Pwell(i)

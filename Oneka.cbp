@@ -11,7 +11,18 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gfortran" />
+				<Option parameters=".\data\Basic" />
 				<Compiler>
+					<Add option="-fimplicit-none" />
+					<Add option="-ffree-line-length-none" />
+					<Add option="-ffree-form" />
+					<Add option="-Wimplicit-interface" />
+					<Add option="-Wconversion" />
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-fcheck=bounds" />
+					<Add option="-fcheck=all" />
 					<Add option="-g" />
 				</Compiler>
 			</Target>
@@ -21,11 +32,18 @@
 				<Option type="1" />
 				<Option compiler="gfortran" />
 				<Compiler>
+					<Add option="-fexpensive-optimizations" />
 					<Add option="-O2" />
 					<Add option="-fimplicit-none" />
 					<Add option="-ffree-line-length-none" />
 					<Add option="-ffree-form" />
 				</Compiler>
+				<Linker>
+					<Add option="-static" />
+				</Linker>
+				<ExtraCommands>
+					<Add after='cmd /c &quot;copy .\bin\Release\Oneka.exe .&quot;' />
+				</ExtraCommands>
 			</Target>
 			<Target title="Test">
 				<Option output="bin/Test/test_Oneka" prefix_auto="1" extension_auto="1" />
@@ -33,9 +51,16 @@
 				<Option type="1" />
 				<Option compiler="gfortran" />
 				<Compiler>
-					<Add option="-W" />
+					<Add option="-fimplicit-none" />
+					<Add option="-ffree-line-length-none" />
+					<Add option="-ffree-form" />
+					<Add option="-Wimplicit-interface" />
+					<Add option="-Wconversion" />
+					<Add option="-pedantic" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
+					<Add option="-fcheck=bounds" />
+					<Add option="-fcheck=all" />
 					<Add option="-g" />
 				</Compiler>
 			</Target>
@@ -44,46 +69,52 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="src/aquifer.f95">
-			<Option weight="0" />
+			<Option weight="1" />
 		</Unit>
 		<Unit filename="src/capture_zone.f95">
-			<Option weight="0" />
+			<Option weight="3" />
 		</Unit>
 		<Unit filename="src/constants.f95">
 			<Option weight="0" />
 		</Unit>
 		<Unit filename="src/driver.f95">
-			<Option weight="0" />
+			<Option weight="6" />
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/error.f95">
+			<Option weight="2" />
+		</Unit>
+		<Unit filename="src/geohydrology.f95">
 			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/main.f95">
+			<Option weight="7" />
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/model.f95">
-			<Option weight="0" />
+			<Option weight="5" />
 		</Unit>
 		<Unit filename="src/numeric.f95">
-			<Option weight="0" />
+			<Option weight="3" />
 		</Unit>
 		<Unit filename="src/regional.f95">
-			<Option weight="0" />
+			<Option weight="4" />
 		</Unit>
 		<Unit filename="src/utilities.f95">
-			<Option weight="0" />
+			<Option weight="1" />
 		</Unit>
 		<Unit filename="src/well.f95">
-			<Option weight="0" />
+			<Option weight="1" />
 		</Unit>
 		<Unit filename="test/test_Main.f95">
-			<Option weight="1" />
+			<Option weight="5" />
 			<Option target="Test" />
-			<Option target="Debug" />
 		</Unit>
 		<Unit filename="test/test_Numeric.f95">
-			<Option weight="0" />
+			<Option weight="4" />
 			<Option target="Test" />
-			<Option target="Debug" />
 		</Unit>
 		<Extensions>
 			<code_completion />
