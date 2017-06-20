@@ -31,6 +31,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gfortran" />
+				<Option parameters=".\data\Basic" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O2" />
