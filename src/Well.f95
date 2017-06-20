@@ -50,17 +50,15 @@ CONTAINS
    REAL(8)                  :: Phi     ! resulting discharge potential
 
    ! Declare the local variables.
-   REAL(8) :: DX, DY, R2
+   REAL(8) :: R
 
    ! Compute the discharge potential for the well.
-   DX  = X - Well%X
-   DY  = Y - Well%Y
-   R2  = DX*DX + DY*DY
+   R = HYPOT(X - Well%X, Y - Well%Y)
 
-   IF( R2 .LT. Well%R*Well%R ) THEN
-      Phi = Well%Q/FOUR_PI * LOG( Well%R*Well%R )
+   IF( R .LT. Well%R ) THEN
+      Phi = Well%Q/TWO_PI * LOG(Well%R)
    ELSE
-      Phi = Well%Q/FOUR_PI * LOG( R2 )
+      Phi = Well%Q/TWO_PI * LOG(R)
    END IF
 
    END FUNCTION Potential_Well

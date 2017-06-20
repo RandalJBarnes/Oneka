@@ -565,8 +565,8 @@ CONTAINS
                WRITE(LUNIT,'(''----------------------------------------'')')
                WRITE(LUNIT,'(''                     Value       Weight '')')
                WRITE(LUNIT,'(''----------------------------------------'')')
-               WRITE(LUNIT,'(''Conductivity: '', E12.4, 1X, F12.6)') Model%Cond(i)%K, Model%Cond(i)%Weight
-               WRITE(LUNIT,'(''Thickness:    '', E12.4, 1X, F12.6)') Model%Thick(h)%Thickness, Model%Thick(h)%Weight
+               WRITE(LUNIT,'(''Conductivity: '', G12.4, 1X, F12.6)') Model%Cond(i)%K, Model%Cond(i)%Weight
+               WRITE(LUNIT,'(''Thickness:    '', G12.4, 1X, F12.6)') Model%Thick(h)%Thickness, Model%Thick(h)%Weight
                WRITE(LUNIT,'(''----------------------------------------'')')
             END IF
 
@@ -596,7 +596,7 @@ CONTAINS
 
             ! High-level progress report.
             WRITE(*,*)
-            WRITE(*, '( I3, '' of '', I3, 5X, ''Conductivity = '', E10.3, 5X, ''Thickness = '', F10.3)' ) &
+            WRITE(*, '( I3, '' of '', I3, 5X, ''Conductivity = '', F10.3, 5X, ''Thickness = '', F10.3)' ) &
                (i-1)*Model%nThick + h, Model%nCond*Model%nThick, Model%Cond(i)%K, Model%Thick(h)%Thickness
 
             ! Sweep through the simulations.
@@ -673,50 +673,50 @@ CONTAINS
          WRITE(LUNIT,*)
          WRITE(LUNIT,'(''Recharge [L/T]'')')
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
-         WRITE(LUNIT,'(11X, 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
+         WRITE(LUNIT,'(''  k  \\  H '', 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
          DO i = 1, Model%nCond
-            WRITE(LUNIT,'(E10.3, '':'', 50E11.3)') Model%Cond(i)%K, ( AvgRec(i,h), h = 1, Model%nThick )
+            WRITE(LUNIT,'(F10.2, '':'', 50E11.3)') Model%Cond(i)%K, ( AvgRec(i,h), h = 1, Model%nThick )
          END DO
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
 
          WRITE(LUNIT,*)
          WRITE(LUNIT,'(''Q Magnitude [L^2/T]'')')
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
-         WRITE(LUNIT,'(11X, 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
+         WRITE(LUNIT,'(''  k  \\  H '', 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
          DO i = 1, Model%nCond
-            WRITE(LUNIT,'(E10.3, '':'', 50E11.3)') Model%Cond(i)%K, ( AvgMag(i,h), h = 1, Model%nThick )
+            WRITE(LUNIT,'(F10.2, '':'', 50E11.3)') Model%Cond(i)%K, ( AvgMag(i,h), h = 1, Model%nThick )
          END DO
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
 
          WRITE(LUNIT,*)
          WRITE(LUNIT,'(''Q Direction [deg]'')')
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
-         WRITE(LUNIT,'(11X, 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
+         WRITE(LUNIT,'(''  k  \\  H '', 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
          DO i = 1, Model%nCond
-            WRITE(LUNIT,'(E10.3, '':'', 50F11.1)') Model%Cond(i)%K, ( RAD_TO_DEG*AvgDir(i,h), h = 1, Model%nThick )
+            WRITE(LUNIT,'(F10.2, '':'', 50F11.1)') Model%Cond(i)%K, ( RAD_TO_DEG*AvgDir(i,h), h = 1, Model%nThick )
          END DO
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
 
          WRITE(LUNIT,*)
          WRITE(LUNIT,'(''Number of Successes'')')
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
-         WRITE(LUNIT,'(11X, 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
+         WRITE(LUNIT,'(''  k  \\  H '', 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
          DO i = 1, Model%nCond
-            WRITE(LUNIT,'(E10.3, '':'', 50I11)') Model%Cond(i)%K, ( nSuccess(i,h), h = 1, Model%nThick )
+            WRITE(LUNIT,'(F10.2, '':'', 50I11)') Model%Cond(i)%K, ( nSuccess(i,h), h = 1, Model%nThick )
          END DO
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
 
          WRITE(LUNIT,*)
          WRITE(LUNIT,'(''Number of Tracks'')')
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
-         WRITE(LUNIT,'(11X, 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
+         WRITE(LUNIT,'(''  k  \\  H '', 50F11.2)') ( Model%Thick(h)%Thickness, h = 1, Model%nThick )
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
          DO i = 1, Model%nCond
-            WRITE(LUNIT,'(E10.3, '':'', 50I11)') Model%Cond(i)%K, ( nTracks(i,h), h = 1, Model%nThick )
+            WRITE(LUNIT,'(F10.2, '':'', 50I11)') Model%Cond(i)%K, ( nTracks(i,h), h = 1, Model%nThick )
          END DO
          WRITE(LUNIT,'(''------------'', 50A11)') ( '-----------', h = 1, Model%nThick )
       END IF
@@ -768,7 +768,7 @@ CONTAINS
 
       ! Declare the local variables.
       INTEGER  :: i, j, k, nActive
-      REAL(8)  :: dx, dy, dDir
+      REAL(8)  :: dx, dy
 
       REAL(8), DIMENSION( Model%nObs )             :: Pev      ! expected value of the discharge potentials from measurements
       REAL(8), DIMENSION( Model%nObs )             :: Pstd     ! standard deviation of the discharge potentials from measurement
@@ -779,19 +779,13 @@ CONTAINS
       REAL(8), DIMENSION( Model%nObs )             :: b        ! measured right-hand-side vector
       REAL(8), DIMENSION(6,6)                      :: L        ! Cholesky decomposition of (X' * Vinv * X)
 
-      LOGICAL, DIMENSION( Model%nObs, 6)           :: XMASK, XXMASK
-      LOGICAL, DIMENSION( Model%nObs)              :: BMASK, BBMASK
-      LOGICAL, DIMENSION( Model%nObs, Model%nObs ) :: VMASK, VVMASK
+      LOGICAL, DIMENSION( Model%nObs, 6)           :: XMASK
+      LOGICAL, DIMENSION( Model%nObs)              :: BMASK
+      LOGICAL, DIMENSION( Model%nObs, Model%nObs ) :: VMASK
 
       REAL(8), ALLOCATABLE                         :: XX(:,:)
       REAL(8), ALLOCATABLE                         :: VVinv(:,:)
       REAL(8), ALLOCATABLE                         :: bb(:)
-
-      REAL(8), DIMENSION(6)                        :: AA
-      REAL(8), DIMENSION(6,6)                      :: CC
-      TYPE(T_GEOHYDROLOGY)                         :: GG
-
-      REAL(8), DIMENSION( Model%nObs, 5)           :: DFBETAS  ! leave-one-out analysis for each observation
 
       ! Use the pumping well of interest as the model origin.
       CALL SetOrigin( Model%Regional, Model%Xo, Model%Yo )
@@ -897,126 +891,6 @@ CONTAINS
          WRITE(LUNIT,'(''Q Direction: '', F12.1, 1X, F12.1, ''       [deg]'')') RAD_TO_DEG*Geo%EDir, RAD_TO_DEG*Geo%SDir
          WRITE(LUNIT,'(''---------------------------------------------------'')')
       END IF
-
-      ! TODO: regression diagonostics
-      !     sign test of residuals
-      !     test of normality for residuals
-      !     test that the variance of the weighted residulas is around 1
-
-      ! TODO: infulential data
-      !     DFFIT
-      !     z-score of residuals w/ p-value
-
-      ! Re-allocate the working storage.
-      DEALLOCATE(XX)
-      DEALLOCATE(VVinv)
-      DEALLOCATE(bb)
-
-      ALLOCATE( XX( nActive-1, 6 ) )
-      ALLOCATE( VVinv( nActive-1, nActive-1 ) )
-      ALLOCATE( bb( nActive-1 ) )
-
-      ! Do the leave-one-out analysis for all active observations.
-      ! Inactive observations are marked by INF.
-      IF( Model%Verbosity .GE. 3) THEN
-         DO i = 1, Model%nObs
-            IF( Model%Obs(i)%isActive .EQV. .TRUE. ) THEN
-               XXMASK = XMASK
-               XXMASK(i,:) = .FALSE.
-               XX = RESHAPE( PACK(X,XXMASK), SHAPE(XX) )
-
-               BBMASK = BMASK
-               BBMASK(i) = .FALSE.
-               bb = RESHAPE( PACK(b,BBMASK), SHAPE(bb) )
-
-               VVMASK = VMASK
-               VVMASK(:,i) = .FALSE.
-               VVMASK(i,:) = .FALSE.
-               VVinv = RESHAPE( PACK(Vinv,VVMASK), SHAPE(VVinv) )
-
-               CALL CholeskyDecomposition( 6, MATMUL(MATMUL(TRANSPOSE(XX), VVinv), XX), L )
-               CALL CholeskySolve( 6, L, MATMUL(MATMUL(TRANSPOSE(XX), VVinv), bb), AA )
-               CALL CholeskyInverse( 6, L, CC )
-               GG = ComputeGeohydrologyStatistics( AA, CC )
-
-               IF( GG%SRec > 0 .AND. Geo%SRec > 0 ) THEN
-                  DFBETAS(i,1) = (GG%ERec - Geo%ERec)/Geo%SRec
-               ELSE
-                  DFBETAS(i,1) = INFINITY
-               END IF
-
-               IF( GG%SQx > 0 .AND. Geo%SQx > 0 ) THEN
-                  DFBETAS(i,2) = (GG%EQx  - Geo%EQx )/Geo%SQx
-               ELSE
-                  DFBETAS(i,2) = INFINITY
-               END IF
-
-               IF( GG%SQy > 0 .AND. Geo%SQy > 0 ) THEN
-                  DFBETAS(i,3) = (GG%EQy  - Geo%EQy )/Geo%SQy
-               ELSE
-                  DFBETAS(i,3) = INFINITY
-               END IF
-
-               IF( GG%SMag > 0 .AND. Geo%SMag > 0 ) THEN
-                  DFBETAS(i,4) = (GG%EMag - Geo%EMag)/Geo%SMag
-               ELSE
-                  DFBETAS(i,4) = INFINITY
-               END IF
-
-               IF( GG%SDir > 0 .AND. Geo%SDir > 0 ) THEN
-                  dDir = GG%EDir - Geo%EDir
-                  IF( dDir .LE. -ONE_PI ) dDir = dDir + TWO_PI
-                  IF( dDir .GE.  ONE_PI ) dDir = TWO_PI - dDir
-                  DFBETAS(i,5) = dDir/Geo%SDir
-               ELSE
-                  DFBETAS(i,5) = INFINITY
-               END IF
-            END IF
-         END DO
-
-         WRITE(LUNIT,*)
-         WRITE(LUNIT,'(''Leave-one-out Influential Data Indentification'')')
-         WRITE(LUNIT,'(''-------------------------------------------------------------------------------------'')')
-         WRITE(LUNIT,'(''                                          Scaled           Scaled           Scaled   '')')
-         WRITE(LUNIT,'(''                                       Change in        Change in        Change in   '')')
-         WRITE(LUNIT,'(''Index            X            Y         Recharge        Magnitude        Direction   '')')
-         WRITE(LUNIT,'(''-------------------------------------------------------------------------------------'')')
-         DO i = 1, Model%nObs
-            WRITE(LUNIT,'(I5, 1X, F12.2, 1X, F12.2, 5X)', ADVANCE='NO') i, Model%Obs(i)%X, Model%Obs(i)%Y
-
-            IF( Model%Obs(i)%isActive .EQV. .FALSE. ) THEN
-               WRITE(LUNIT,'(4X, ''INACTIVE         INACTIVE         INACTIVE'')')
-            ELSE
-               IF( ISINF(DFBETAS(i,1)) ) THEN
-                  WRITE(LUNIT,'(9X, ''N/A'', 5X)', ADVANCE='NO')
-               ELSE IF( ABS(DFBETAS(i,1)) .GE. INFLUENTIAL ) THEN
-                  WRITE(LUNIT,'(F12.2, ''<<<< '')', ADVANCE='NO') DFBETAS(i,1)
-               ELSE
-                  WRITE(LUNIT,'(F12.2, 5X)', ADVANCE='NO') DFBETAS(i,1)
-               END IF
-
-               IF( ISINF(DFBETAS(i,4)) ) THEN
-                  WRITE(LUNIT,'(9X, ''N/A'', 5X)', ADVANCE='NO')
-               ELSE IF( ABS(DFBETAS(i,4)) .GE. INFLUENTIAL ) THEN
-                  WRITE(LUNIT,'(F12.2, ''<<<< '')', ADVANCE='NO') DFBETAS(i,4)
-               ELSE
-                  WRITE(LUNIT,'(F12.2, 5X)', ADVANCE='NO') DFBETAS(i,4)
-               END IF
-
-               IF( ISINF(DFBETAS(i,5)) ) THEN
-                  WRITE(LUNIT,'(9X, ''N/A'', 5X)', ADVANCE='NO')
-               ELSE IF( ABS(DFBETAS(i,5)) .GE. INFLUENTIAL ) THEN
-                  WRITE(LUNIT,'(F12.2, ''<<<< '')', ADVANCE='NO') DFBETAS(i,5)
-               ELSE
-                  WRITE(LUNIT,'(F12.2, 5X)', ADVANCE='NO') DFBETAS(i,5)
-               END IF
-               WRITE(LUNIT,*)
-            END IF
-         END DO
-         WRITE(LUNIT,'(''-------------------------------------------------------------------------------------'')')
-         WRITE(LUNIT,*)
-      END IF
-
    END SUBROUTINE Fit_Model
 
    !---------------------------------------------------------------------------
