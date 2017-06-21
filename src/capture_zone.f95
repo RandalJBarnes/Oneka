@@ -1,5 +1,5 @@
 !==============================================================================
-! Module CAPTUREZONE_MODULE                                       (20-Jun-2017)
+! Module CAPTUREZONE_MODULE                                       (21-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -49,16 +49,16 @@ MODULE CAPTUREZONE_MODULE
    !===========================================================================
    ! INTERFACES
    !===========================================================================
+   INTERFACE CreateAsciiGridFile
+      MODULE PROCEDURE CreateAsciiGridFile_CaptureZone
+   END INTERFACE
+
    INTERFACE CreateEsriGridFile
       MODULE PROCEDURE CreateEsriGridFile_CaptureZone
    END INTERFACE
 
    INTERFACE CreateSurferGridFile
       MODULE PROCEDURE CreateSurferGridFile_CaptureZone
-   END INTERFACE
-
-   INTERFACE CreateAsciiGridFile
-      MODULE PROCEDURE CreateAsciiGridFile_CaptureZone
    END INTERFACE
 
    INTERFACE DistanceSquared
@@ -91,6 +91,68 @@ MODULE CAPTUREZONE_MODULE
 
 !------------------------------------------------------------------------------
 CONTAINS
+   !---------------------------------------------------------------------------
+   ! CreateAsciiGridFile_CaptureZone
+   !
+   ! Notes:
+   !  o  This routine writes out the entire grid using a simple, space-
+   !     delimited, ASCII text file format.
+   !---------------------------------------------------------------------------
+   SUBROUTINE CreateAsciiGridFile_CaptureZone( CaptureZone, Filename )
+
+   ! Declare the arguments
+   TYPE(T_CAPTUREZONE), INTENT(IN) :: CaptureZone
+   CHARACTER(*),        INTENT(IN) :: Filename
+
+   ! Declare local parameters.
+   INTEGER, PARAMETER :: GUNIT = 31
+
+   ! Declare local variables
+   INTEGER :: row, col
+   REAL(8) :: Z
+   CHARACTER(50) :: BaseFilename, GridFilename
+
+   ! Make certain that the grids have been filled.
+   IF( CaptureZone%Weight .LE. 0 ) RETURN
+
+   ! Add the extension to the filename.
+   BaseFilename = ADJUSTL(Filename)
+   GridFilename = BaseFilename(1:LEN_TRIM(BaseFilename)) // '.txt'
+
+   ! Open the file, with a record length of 8, and write out the header information.
+   OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", STATUS="REPLACE", ERR=10 )
+
+   WRITE(GUNIT,'(I10, 1X, I10)') CaptureZone%nRows, CaptureZone%nCols
+   WRITE(GUNIT,'(E16.8, 1X, E16.8)') CaptureZone%Xmin, CaptureZone%Xmax
+   WRITE(GUNIT,'(E16.8, 1X, E16.8)') CaptureZone%Ymin, CaptureZone%Ymax
+
+   DO row = 1, CaptureZone%nRows
+      DO col = 1, CaptureZone%nCols
+         Z = CaptureZone%PGrid(row,col) / CaptureZone%Weight
+         WRITE(GUNIT,'(E12.4, 1X)', ADVANCE='NO') Z
+      END DO
+      WRITE(GUNIT,*)
+   END DO
+
+   CLOSE(GUNIT)
+
+   WRITE(LUNIT,*)
+   WRITE(LUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))
+   WRITE(LUNIT,*)
+
+   WRITE(SUNIT,*)
+   WRITE(SUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))
+   WRITE(SUNIT,*)
+
+   RETURN
+
+   ! Process the file error.
+10 CALL FileError( GridFilename )
+   RETURN
+
+   END SUBROUTINE CreateAsciiGridFile_CaptureZone
+
+
    !---------------------------------------------------------------------------
    ! CreateEsriGridFile_CaptureZone
    !
@@ -126,13 +188,13 @@ CONTAINS
    ! Write the header file.
    OPEN( UNIT=HUNIT, FILE=HeadFilename, ACTION='WRITE', STATUS='REPLACE', ERR=10 )
 
-   WRITE(HUNIT,*) 'ncols ',       CaptureZone%nCols
-   WRITE(HUNIT,*) 'nrows ',       CaptureZone%nRows
-   WRITE(HUNIT,*) 'xllcorner ',   CaptureZone%Xmin
-   WRITE(HUNIT,*) 'yllcorner ',   CaptureZone%Ymin
-   WRITE(HUNIT,*) 'cellsize ',    CaptureZone%DeltaX
-   WRITE(HUNIT,*) 'nodata_value', BLANKVAL
-   WRITE(HUNIT,*) 'byteorder lsbfirst'
+   WRITE(HUNIT,*) 'NCOLS ',        CaptureZone%nCols
+   WRITE(HUNIT,*) 'NROWS ',        CaptureZone%nRows
+   WRITE(HUNIT,*) 'XLLCORNER ',    CaptureZone%Xmin
+   WRITE(HUNIT,*) 'YLLCORNER ',    CaptureZone%Ymin
+   WRITE(HUNIT,*) 'CELLSIZE ',     CaptureZone%DeltaX
+   WRITE(HUNIT,*) 'NODATA_VALUE ', BLANKVAL
+   WRITE(HUNIT,*) 'BYTEORDER LSBFIRST'
 
    CLOSE(HUNIT)
 
@@ -145,12 +207,12 @@ CONTAINS
    ! Write out the grid file.
    OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", FORM="UNFORMATTED", ACCESS="DIRECT", RECL=4, STATUS="REPLACE", ERR=20 )
 
-   ! CHANGE: Flip the row the other way around. (13 Jun 2017, RJB)
-   ! DO row = CaptureZone%nRows, 1, -1
+   ! CHANGED: Changed the record order to start at the upper left with rec=1. (RJB, 21-Jun-2017)
+   ! The code used to be "j = (row-1)*CaptureZone%nCols + col".
 
-   DO row = 1, CaptureZone%nRows
+   DO row = CaptureZone%nRows, 1, -1
       DO col = 1, CaptureZone%nCols
-         j = (row-1)*CaptureZone%nCols + col
+         j = (CaptureZone%nRows-row)*CaptureZone%nCols + col
          Z = CaptureZone%PGrid(row,col) / CaptureZone%Weight
          WRITE(GUNIT, REC=j) REAL( Z, 4 )
       END DO
@@ -250,67 +312,6 @@ CONTAINS
    RETURN
 
    END SUBROUTINE CreateSurferGridFile_CaptureZone
-
-   !---------------------------------------------------------------------------
-   ! CreateAsciiGridFile_CaptureZone
-   !
-   ! Notes:
-   !  o  This routine writes out the entire grid using a simple, space-
-   !     delimited, ASCII text file format.
-   !---------------------------------------------------------------------------
-   SUBROUTINE CreateAsciiGridFile_CaptureZone( CaptureZone, Filename )
-
-   ! Declare the arguments
-   TYPE(T_CAPTUREZONE), INTENT(IN) :: CaptureZone
-   CHARACTER(*),        INTENT(IN) :: Filename
-
-   ! Declare local parameters.
-   INTEGER, PARAMETER :: GUNIT = 31
-
-   ! Declare local variables
-   INTEGER :: row, col
-   REAL(8) :: Z
-   CHARACTER(50) :: BaseFilename, GridFilename
-
-   ! Make certain that the grids have been filled.
-   IF( CaptureZone%Weight .LE. 0 ) RETURN
-
-   ! Add the extension to the filename.
-   BaseFilename = ADJUSTL(Filename)
-   GridFilename = BaseFilename(1:LEN_TRIM(BaseFilename)) // '.txt'
-
-   ! Open the file, with a record length of 8, and write out the header information.
-   OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", STATUS="REPLACE", ERR=10 )
-
-   WRITE(GUNIT,'(I10, 1X, I10)') CaptureZone%nRows, CaptureZone%nCols
-   WRITE(GUNIT,'(E16.8, 1X, E16.8)') CaptureZone%Xmin, CaptureZone%Xmax
-   WRITE(GUNIT,'(E16.8, 1X, E16.8)') CaptureZone%Ymin, CaptureZone%Ymax
-
-   DO row = 1, CaptureZone%nRows
-      DO col = 1, CaptureZone%nCols
-         Z = CaptureZone%PGrid(row,col) / CaptureZone%Weight
-         WRITE(GUNIT,'(E12.4, 1X)', ADVANCE='NO') Z
-      END DO
-      WRITE(GUNIT,*)
-   END DO
-
-   CLOSE(GUNIT)
-
-   WRITE(LUNIT,*)
-   WRITE(LUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))
-   WRITE(LUNIT,*)
-
-   WRITE(SUNIT,*)
-   WRITE(SUNIT,*) 'ASCII grid file created: ', ADJUSTL(TRIM(GridFilename))
-   WRITE(SUNIT,*)
-
-   RETURN
-
-   ! Process the file error.
-10 CALL FileError( GridFilename )
-   RETURN
-
-   END SUBROUTINE CreateAsciiGridFile_CaptureZone
 
 
    !---------------------------------------------------------------------------
@@ -547,7 +548,7 @@ CONTAINS
    !
    ! Notes:
    !  o  This routine allocates a new grid, copies the contents from the old
-   !     grid, and then dealloates the old grids.  Thus, there must be suffi-
+   !     grid, and then deallocates the old grids.  Thus, there must be suffi-
    !     cient memory to hold two copies simultaneously.
    !---------------------------------------------------------------------------
    SUBROUTINE ExpandGrid_CaptureZone( CaptureZone, X, Y )

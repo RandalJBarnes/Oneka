@@ -1,5 +1,5 @@
 !==============================================================================
-! Module MODEL_MODULE                                            (20-Jun-2017)
+! Module MODEL_MODULE                                            (21-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -565,8 +565,8 @@ CONTAINS
                WRITE(LUNIT,'(''----------------------------------------'')')
                WRITE(LUNIT,'(''                     Value       Weight '')')
                WRITE(LUNIT,'(''----------------------------------------'')')
-               WRITE(LUNIT,'(''Conductivity: '', G12.4, 1X, F12.6)') Model%Cond(i)%K, Model%Cond(i)%Weight
-               WRITE(LUNIT,'(''Thickness:    '', G12.4, 1X, F12.6)') Model%Thick(h)%Thickness, Model%Thick(h)%Weight
+               WRITE(LUNIT,'(''Conductivity: '', F12.4, 1X, F12.6)') Model%Cond(i)%K, Model%Cond(i)%Weight
+               WRITE(LUNIT,'(''Thickness:    '', F12.4, 1X, F12.6)') Model%Thick(h)%Thickness, Model%Thick(h)%Weight
                WRITE(LUNIT,'(''----------------------------------------'')')
             END IF
 
