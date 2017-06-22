@@ -1,5 +1,5 @@
 !==============================================================================
-! Module ERROR_MODULE                                             (21-Jun-2017)
+! Module ERROR_MODULE                                             (22-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -41,6 +41,11 @@ MODULE ERROR_MODULE
    INTEGER, PARAMETER :: A_ISSINGULAR_ERROR     = 104
    INTEGER, PARAMETER :: INVALID_PARAM_ERROR    = 105
    INTEGER, PARAMETER :: A_ISNOTPD_ERROR        = 106
+
+   INTEGER, PARAMETER :: AQUIFER_NOT_PREPARED_ERROR      = 201
+   INTEGER, PARAMETER :: CONDUCTIVITY_NOT_PREPARED_ERROR = 202
+   INTEGER, PARAMETER :: THICKNESS_NOT_PREPARED_ERROR    = 203
+   INTEGER, PARAMETER :: GRID_NOT_PREPARED_ERROR         = 204
 
    !===========================================================================
    ! INTERFACES
@@ -84,13 +89,56 @@ CONTAINS
 
       ! Print out specifiic error information.
       SELECT CASE( ErrNo )
+         CASE (AQUIFER_NOT_PREPARED_ERROR)
+            WRITE(LUNIT,*) 'Error Number ', ErrNo
+            WRITE(LUNIT,*) 'The porosity must be specified before creating a capture zone.'
+            WRITE(LUNIT,*) 'An AQUIFER command is required.'
+            WRITE(LUNIT,*)
+
+            WRITE(*,*) 'Error Number ', ErrNo
+            WRITE(*,*) 'The porosity must be specified before creating a capture zone.'
+            WRITE(*,*) 'An AQUIFER command is required.'
+            WRITE(*,*)
+
+         CASE (CONDUCTIVITY_NOT_PREPARED_ERROR)
+            WRITE(LUNIT,*) 'Error Number ', ErrNo
+            WRITE(LUNIT,*) 'The conductivity must be specified before creating a capture zone.'
+            WRITE(LUNIT,*) 'A CONDUCTIVITY or CONDUCTIVITYDISTRIBUTION command is required.'
+            WRITE(LUNIT,*)
+
+            WRITE(*,*) 'Error Number ', ErrNo
+            WRITE(*,*) 'The conductivity must be specified before creating a capture zone.'
+            WRITE(*,*) 'A CONDUCTIVITY or CONDUCTIVITYDISTRIBUTION command is required.'
+            WRITE(*,*)
+
+         CASE (GRID_NOT_PREPARED_ERROR)
+            WRITE(LUNIT,*) 'Error Number ', ErrNo
+            WRITE(LUNIT,*) 'The grid must be specified before creating a capture zone.'
+            WRITE(LUNIT,*) 'An ASCII, ESRI, or SURFER command is required.'
+            WRITE(LUNIT,*)
+
+            WRITE(*,*) 'Error Number ', ErrNo
+            WRITE(*,*) 'The grid must be specified before creating a capture zone.'
+            WRITE(*,*) 'An ASCII, ESRI, or SURFER command is required.'
+            WRITE(*,*)
+
+         CASE (THICKNESS_NOT_PREPARED_ERROR)
+            WRITE(LUNIT,*) 'Error Number ', ErrNo
+            WRITE(LUNIT,*) 'The thickness must be specified before creating a capture zone.'
+            WRITE(LUNIT,*) 'A THICKNESS or THICKNESSDISTRIBUTION command is required.'
+            WRITE(LUNIT,*)
+
+            WRITE(*,*) 'Error Number ', ErrNo
+            WRITE(*,*) 'The thickness must be specified before creating a capture zone.'
+            WRITE(*,*) 'A THICKNESS or THICKNESSDISTRIBUTION command is required.'
+            WRITE(*,*)
 
          CASE DEFAULT
             WRITE(LUNIT,*) 'Error Number ', ErrNo
             WRITE(LUNIT,*)
 
             WRITE(*,*) 'Error Number ', ErrNo
-            WRITE(LUNIT,*)
+            WRITE(*,*)
       END SELECT
    END SUBROUTINE CommandError
 

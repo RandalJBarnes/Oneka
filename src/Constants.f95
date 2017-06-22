@@ -1,5 +1,5 @@
 !==============================================================================
-! Module CONSTANTS_MODULE                                         (21-Jun-2017)
+! Module CONSTANTS_MODULE                                         (22-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes

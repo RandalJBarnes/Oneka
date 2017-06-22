@@ -1,5 +1,5 @@
 !==============================================================================
-! Module MODEL_MODULE                                            (21-Jun-2017)
+! Module MODEL_MODULE                                            (22-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -33,9 +33,10 @@ MODULE MODEL_MODULE
    INTEGER, PARAMETER :: MAX_TRACKS  = 1000     ! maximum number of tracks in a pack
    REAL(8), PARAMETER :: MIN_D_THETA = 0.005    ! minimum angle between track starts [radians]
 
-   INTEGER, PARAMETER :: ESRI_GRID   = 1
-   INTEGER, PARAMETER :: SURFER_GRID = 2
-   INTEGER, PARAMETER :: ASCII_GRID  = 3
+   INTEGER, PARAMETER :: NO_GRID     = 0
+   INTEGER, PARAMETER :: ASCII_GRID  = 1
+   INTEGER, PARAMETER :: ESRI_GRID   = 2
+   INTEGER, PARAMETER :: SURFER_GRID = 3
 
    REAL(8), PARAMETER :: MIN_PVAR    = 0.01     ! minimum allowed discharge potential variance
    REAL(8), PARAMETER :: INFLUENTIAL = 1.0      ! minimum change to be considered "influential"
@@ -91,7 +92,7 @@ MODULE MODEL_MODULE
       TYPE(T_THICK), DIMENSION( MAX_THICK ) :: Thick
 
       ! Grid type.
-      INTEGER :: GridType = ASCII_GRID
+      INTEGER :: GridType = NO_GRID
 
       ! Tracking parameters.
       REAL(8) :: Duration = 0          ! time limit
@@ -503,8 +504,30 @@ CONTAINS
       INTEGER, DIMENSION(Model%nCond, Model%nThick) :: nSuccess
       INTEGER, DIMENSION(Model%nCond, Model%nThick) :: nTracks
 
-      ! Check the arguments.
-      IF( nSims .LT. 1 .OR. Model%nCond .LT. 1 .OR. Model%nThick .LT. 1 ) THEN
+      ! Make certain that all of the necessary precursor commands have been called.
+      ! These include AQUIFER, CONDUCTIVITY, THICKNESS, and one of grid specifications:
+      ! ASCII, ESRI, or SURFER.
+      IF( Model%Aquifer%Porosity .LE. 0 ) THEN
+         ErrNo = AQUIFER_NOT_PREPARED_ERROR
+         RETURN
+      END IF
+
+      IF( Model%nCond .LT. 1 ) THEN
+         ErrNo = CONDUCTIVITY_NOT_PREPARED_ERROR
+         RETURN
+      END IF
+
+      IF( Model%nThick .LT. 1 ) THEN
+         ErrNo = THICKNESS_NOT_PREPARED_ERROR
+         RETURN
+      END IF
+
+      IF( Model%GridType .EQ. NO_GRID ) THEN
+         ErrNo = GRID_NOT_PREPARED_ERROR
+         RETURN
+      END IF
+
+      IF( nSims .LT. 1 ) THEN
          ErrNo = CAPTUREZONE_ERROR
          RETURN
       END IF
@@ -955,7 +978,7 @@ CONTAINS
       Model%nThick   = 0
       Model%Thick    = T_THICK( 0, 0 )
 
-      Model%GridType = SURFER_GRID
+      Model%GridType = NO_GRID
 
       Model%Duration = 0
       Model%Step     = 0

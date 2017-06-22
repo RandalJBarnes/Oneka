@@ -1,5 +1,5 @@
 !==============================================================================
-! Module CAPTUREZONE_MODULE                                       (21-Jun-2017)
+! Module CAPTUREZONE_MODULE                                       (22-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -207,7 +207,7 @@ CONTAINS
    ! Write out the grid file.
    OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", FORM="UNFORMATTED", ACCESS="DIRECT", RECL=4, STATUS="REPLACE", ERR=20 )
 
-   ! CHANGED: Changed the record order to start at the upper left with rec=1. (RJB, 21-Jun-2017)
+   ! CHANGED: Changed the record order to start at the upper left with rec=1. (RJB, 22-Jun-2017)
    ! The code used to be "j = (row-1)*CaptureZone%nCols + col".
 
    DO row = CaptureZone%nRows, 1, -1

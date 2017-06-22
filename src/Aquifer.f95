@@ -1,5 +1,5 @@
 !==============================================================================
-! Module AQUIFER_MODULE                                           (21-Jun-2017)
+! Module AQUIFER_MODULE                                           (22-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -18,10 +18,9 @@ MODULE AQUIFER_MODULE
    ! Type T_AQUIFER
    !===========================================================================
    TYPE T_AQUIFER
-   PRIVATE
       REAL(8) :: Base         = 0         ! base elevation of aquifer
       REAL(8) :: Thickness    = INFINITY  ! aquifer thickness
-      REAL(8) :: Porosity     = 0.30      ! aquifer porosity
+      REAL(8) :: Porosity     = -1        ! aquifer porosity
       REAL(8) :: Conductivity = 1         ! hydraulic conductivity k
    END TYPE T_AQUIFER
 
@@ -225,7 +224,7 @@ CONTAINS
    ! Reset the parameters the defaults.
    Aquifer%Base         = 0
    Aquifer%Thickness    = INFINITY
-   Aquifer%Porosity     = 0.30
+   Aquifer%Porosity     = -1
    Aquifer%Conductivity = 1
 
    END SUBROUTINE Reset_Aquifer

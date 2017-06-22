@@ -31,7 +31,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gfortran" />
-				<Option parameters=".\data\Basic" />
+				<Option parameters=".\data\LongPrairieQB" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O2" />
