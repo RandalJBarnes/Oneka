@@ -1,5 +1,5 @@
 !==============================================================================
-! Module ERROR_MODULE                                             (22-Jun-2017)
+! Module ERROR_MODULE                                             (28-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes

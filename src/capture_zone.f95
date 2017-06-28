@@ -1,8 +1,8 @@
 !==============================================================================
-! Module CAPTUREZONE_MODULE                                       (22-Jun-2017)
+! Module CAPTUREZONE_MODULE                                       (28-Jun-2017)
 !
 ! Written by:
-! 	   Dr. Randal J. Barnes
+!     Dr. Randal J. Barnes
 !     Department of Civil, Environmental, and Geo- Engineering
 !     University of Minnesota
 !     <barne003@umn.edu>
@@ -207,7 +207,7 @@ CONTAINS
    ! Write out the grid file.
    OPEN( UNIT=GUNIT, FILE=GridFilename, ACTION="WRITE", FORM="UNFORMATTED", ACCESS="DIRECT", RECL=4, STATUS="REPLACE", ERR=20 )
 
-   ! CHANGED: Changed the record order to start at the upper left with rec=1. (RJB, 22-Jun-2017)
+   ! CHANGED: Changed the record order to start at the upper left with rec=1. (RJB, 28-Jun-2017)
    ! The code used to be "j = (row-1)*CaptureZone%nCols + col".
 
    DO row = CaptureZone%nRows, 1, -1
@@ -434,19 +434,20 @@ CONTAINS
    TYPE(T_CAPTUREZONE), INTENT(INOUT) :: CaptureZone
    REAL(8),             INTENT(IN)    :: W
 
-   ! Delcare local variables.
+   ! Declare local variables.
    INTEGER :: i,j
 
    ! Update the probability grid.
    ! WHERE( CaptureZone%RGrid ) CaptureZone%PGrid = CaptureZone%PGrid + W
-   DO i = 1, CaptureZone%nRows
-      DO j = 1, CaptureZone%nCols
-         IF( CaptureZone%RGrid(i,j) ) THEN
-            CaptureZone%PGrid(i,j) = CaptureZone%PGrid(i,j) + W
-         END IF
-      END DO
-   END DO
+!   DO i = 1, CaptureZone%nRows
+!      DO j = 1, CaptureZone%nCols
+!         IF( CaptureZone%RGrid(i,j) ) THEN
+!            CaptureZone%PGrid(i,j) = CaptureZone%PGrid(i,j) + W
+!         END IF
+!      END DO
+!   END DO
 
+   FORALL(i=1:CaptureZone%nRows, j=1:CaptureZone%nCols, CaptureZone%RGrid(i,j)) CaptureZone%PGrid(i,j) = CaptureZone%PGrid(i,j) + W
    CaptureZone%Weight = CaptureZone%Weight + W
 
    ! Reset the registration grid.

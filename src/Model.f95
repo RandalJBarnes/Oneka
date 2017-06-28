@@ -1,5 +1,5 @@
 !==============================================================================
-! Module MODEL_MODULE                                            (22-Jun-2017)
+! Module MODEL_MODULE                                            (28-Jun-2017)
 !
 ! Written by:
 ! 	   Dr. Randal J. Barnes
@@ -306,7 +306,6 @@ CONTAINS
    FUNCTION PackOfTracks_Model( Model ) RESULT( Status )
       ! Declare the arguments
       TYPE(T_MODEL), INTENT(INOUT) :: Model
-
       INTEGER                      :: Status
 
       ! Declare the local variables.
@@ -349,7 +348,7 @@ CONTAINS
          DO WHILE( next(p) .NE. 0 )
             q = next(p)
             IF( Theta(q)-Theta(p) > MIN_D_THETA ) THEN
-               sep = SQRT( (Xf(p)-Xf(q))**2 + (Yf(p)-Yf(q))**2 )
+               sep = HYPOT(Xf(p)-Xf(q), Yf(p)-Yf(q))
 
                IF( sep > Model%maxSep ) THEN
                   nTracks = nTracks + 1
@@ -439,7 +438,7 @@ CONTAINS
 
          dX = Xn - X
          dY = Yn - Y
-         dS = SQRT( dX*dX + dY*dY )
+         dS = HYPOT(dX,dY)
 
          S  = S + dS
          T  = T + dT
@@ -604,7 +603,7 @@ CONTAINS
             CALL MVNormalRNG(nSims, 6, Avg, Cov, P)
 
             ! Report the simulated parameters.
-            IF( Model%Verbosity .GE. 4 ) THEN
+            IF( Model%Verbosity .GE. 3 ) THEN
                WRITE(LUNIT,*)
                WRITE(LUNIT,'(''Simulated Parameters'')')
                WRITE(LUNIT,'(''------------------------------------------------------------------------------'')')
@@ -1123,6 +1122,33 @@ CONTAINS
 
 
    !---------------------------------------------------------------------------
+   ! SetAsciiGrid
+   !---------------------------------------------------------------------------
+   SUBROUTINE SetAsciiGrid_Model( Model, nRows, nCols, Xmin, Xmax, Ymin, Ymax, mRows, mCols, ErrNo )
+      ! Declare the arguments.
+      TYPE(T_MODEL), INTENT(INOUT) :: Model
+      INTEGER,       INTENT(IN)    :: nRows
+      INTEGER,       INTENT(IN)    :: nCols
+      REAL(8),       INTENT(IN)    :: Xmin
+      REAL(8),       INTENT(IN)    :: Xmax
+      REAL(8),       INTENT(IN)    :: Ymin
+      REAL(8),       INTENT(IN)    :: Ymax
+      INTEGER,       INTENT(IN)    :: mRows
+      INTEGER,       INTENT(IN)    :: mCols
+      INTEGER,       INTENT(OUT)   :: ErrNo
+
+      ! Set the model's regional parameters.
+      Model%GridType = ASCII_GRID
+
+      IF( .NOT. SetGrid( Model%CaptureZone, nRows, nCols, Xmin, Xmax, Ymin, Ymax, mRows, mCols ) ) THEN
+         ErrNo = CAPTUREZONE_ERROR
+      ELSE
+         ErrNo = NO_ERROR
+      END IF
+   END SUBROUTINE SetAsciiGrid_Model
+
+
+   !---------------------------------------------------------------------------
    ! SetEsriGrid
    !---------------------------------------------------------------------------
    SUBROUTINE SetEsriGrid_Model( Model, nRows, nCols, Xmin, Ymin, Cellsize, mRows, mCols, ErrNo )
@@ -1179,32 +1205,6 @@ CONTAINS
          ErrNo = NO_ERROR
       END IF
    END SUBROUTINE SetSurferGrid_Model
-
-   !---------------------------------------------------------------------------
-   ! SetAsciiGrid
-   !---------------------------------------------------------------------------
-   SUBROUTINE SetAsciiGrid_Model( Model, nRows, nCols, Xmin, Xmax, Ymin, Ymax, mRows, mCols, ErrNo )
-      ! Declare the arguments.
-      TYPE(T_MODEL), INTENT(INOUT) :: Model
-      INTEGER,       INTENT(IN)    :: nRows
-      INTEGER,       INTENT(IN)    :: nCols
-      REAL(8),       INTENT(IN)    :: Xmin
-      REAL(8),       INTENT(IN)    :: Xmax
-      REAL(8),       INTENT(IN)    :: Ymin
-      REAL(8),       INTENT(IN)    :: Ymax
-      INTEGER,       INTENT(IN)    :: mRows
-      INTEGER,       INTENT(IN)    :: mCols
-      INTEGER,       INTENT(OUT)   :: ErrNo
-
-      ! Set the model's regional parameters.
-      Model%GridType = ASCII_GRID
-
-      IF( .NOT. SetGrid( Model%CaptureZone, nRows, nCols, Xmin, Xmax, Ymin, Ymax, mRows, mCols ) ) THEN
-         ErrNo = CAPTUREZONE_ERROR
-      ELSE
-         ErrNo = NO_ERROR
-      END IF
-   END SUBROUTINE SetAsciiGrid_Model
 
 
    !---------------------------------------------------------------------------
